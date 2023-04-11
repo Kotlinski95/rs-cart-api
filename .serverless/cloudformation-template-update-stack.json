@@ -71,10 +71,10 @@
         }
       }
     },
-    "MainLogGroup": {
+    "CartRootLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/serverless-example-dev-main"
+        "LogGroupName": "/aws/lambda/serverless-example-dev-cartRoot"
       }
     },
     "IamRoleLambdaExecution": {
@@ -155,20 +155,30 @@
         }
       }
     },
-    "MainLambdaFunction": {
+    "CartRootLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/serverless-example/dev/1680713349032-2023-04-05T16:49:09.032Z/serverless-example.zip"
+          "S3Key": "serverless/serverless-example/dev/1681230234159-2023-04-11T16:23:54.159Z/serverless-example.zip"
         },
-        "Handler": "dist/main.handler",
+        "Handler": "dist/main.cartRoot",
         "Runtime": "nodejs14.x",
-        "FunctionName": "serverless-example-dev-main",
+        "FunctionName": "serverless-example-dev-cartRoot",
         "MemorySize": 1024,
         "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "DATABASE_HOST": "carts.cmlce2t1zqbk.us-east-1.rds.amazonaws.com",
+            "DATABASE_PORT": "5432",
+            "RDS_USERDATABASE_USERNAMENAME": "${DATABASE_USERNAME}",
+            "DATABASE_PASSWORD": "adikson95",
+            "DATABASE_NAME": "carts",
+            "DATABASE_USERNAME": "postgres"
+          }
+        },
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -177,17 +187,17 @@
         }
       },
       "DependsOn": [
-        "MainLogGroup"
+        "CartRootLogGroup"
       ]
     },
-    "MainLambdaVersionFmWArMAFx24BBwAUwOrk6nqJ8fa15Nj1fgDO1cM78": {
+    "CartRootLambdaVersion96uQbLhHZzs5ZnylS6qtjFamMgWVFMfIGt1rACkkCs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "MainLambdaFunction"
+          "Ref": "CartRootLambdaFunction"
         },
-        "CodeSha256": "S0QQ2DaHfj0FiKrluHm5lnx+w2yOCiDkG6Fs56Z59JM="
+        "CodeSha256": "PRi7wUozGcO0ZleLGndGQHibqPGlsiQvZRn9AGHRDQ4="
       }
     },
     "ApiGatewayRestApi": {
@@ -212,6 +222,99 @@
           ]
         },
         "PathPart": "{proxy+}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodProxyVarOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceProxyVar"
+        },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -251,7 +354,7 @@
                 ":lambda:path/2015-03-31/functions/",
                 {
                   "Fn::GetAtt": [
-                    "MainLambdaFunction",
+                    "CartRootLambdaFunction",
                     "Arn"
                   ]
                 },
@@ -263,7 +366,7 @@
         "MethodResponses": []
       },
       "DependsOn": [
-        "MainLambdaPermissionApiGateway"
+        "CartRootLambdaPermissionApiGateway"
       ]
     },
     "ApiGatewayMethodProxyVarAny": {
@@ -297,7 +400,7 @@
                 ":lambda:path/2015-03-31/functions/",
                 {
                   "Fn::GetAtt": [
-                    "MainLambdaFunction",
+                    "CartRootLambdaFunction",
                     "Arn"
                   ]
                 },
@@ -309,10 +412,10 @@
         "MethodResponses": []
       },
       "DependsOn": [
-        "MainLambdaPermissionApiGateway"
+        "CartRootLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1680713334804": {
+    "ApiGatewayDeployment1681230214383": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -321,16 +424,18 @@
         "StageName": "dev"
       },
       "DependsOn": [
+        "ApiGatewayMethodOptions",
+        "ApiGatewayMethodProxyVarOptions",
         "ApiGatewayMethodAny",
         "ApiGatewayMethodProxyVarAny"
       ]
     },
-    "MainLambdaPermissionApiGateway": {
+    "CartRootLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
           "Fn::GetAtt": [
-            "MainLambdaFunction",
+            "CartRootLambdaFunction",
             "Arn"
           ]
         },
@@ -372,13 +477,13 @@
         "Name": "sls-serverless-example-dev-ServerlessDeploymentBucketName"
       }
     },
-    "MainLambdaFunctionQualifiedArn": {
+    "CartRootLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionFmWArMAFx24BBwAUwOrk6nqJ8fa15Nj1fgDO1cM78"
+        "Ref": "CartRootLambdaVersion96uQbLhHZzs5ZnylS6qtjFamMgWVFMfIGt1rACkkCs"
       },
       "Export": {
-        "Name": "sls-serverless-example-dev-MainLambdaFunctionQualifiedArn"
+        "Name": "sls-serverless-example-dev-CartRootLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {

@@ -10,7 +10,10 @@ const port = process.env.PORT || 4000;
 let server: Handler;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
+  app.enableCors();
+  // await app.listen(3000);
+  await app.init();
 
   const config = new DocumentBuilder()
     .setTitle('CloudX Databases')
@@ -20,8 +23,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  await app.listen(3000);
-
   const expressApp = app.getHttpAdapter().getInstance();
   return serverlessExpress({ app: expressApp });
 }
@@ -29,16 +30,22 @@ bootstrap().then(() => {
   console.log('App is running on %s port', port);
 });
 
-export const handler: Handler = async (
+export const cartRoot: Handler = async (
   event: any,
   context: Context,
   callback: Callback,
 ) => {
-  const appContext = await NestFactory.createApplicationContext(AppModule);
-  const appService = appContext.get(AppService);
+  // const appContext = await NestFactory.createApplicationContext(AppModule);
+  // const appService = appContext.get(AppService);
+  console.log("INFO | AWS lambda handler init: event: ", event, " context: ", context);
+  server = server ?? (await bootstrap());
+  console.log("INFO | SERVER: ", server(event, context, callback));
+  return server(event, context, callback)
+  // return {
+  //   body: JSON.stringify('Hello from CART Lambda'),
+  //   statusCode: 200,
+  // };
 
-  return {
-    body: appService.getHello(),
-    statusCode: HttpStatus.OK,
-  };
+  // server = server ?? (await bootstrap());
+  // return server(event, context, callback);
 };
