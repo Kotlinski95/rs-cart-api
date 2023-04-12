@@ -1,11 +1,14 @@
+import { Carts } from 'src/database/entities/carts.entity';
 import { Cart, CartItem } from '../models';
 
 /**
  * @param {Cart} cart
  * @returns {number}
  */
-export function calculateCartTotal(cart: Cart): number {
-  return cart ? cart.items.reduce((acc: number, { product: { price }, count }: CartItem) => {
-    return acc += price * count;
-  }, 0) : 0;
+export function calculateCartTotal(carts: Carts): number {
+  return carts
+    ? carts.Cart_items.reduce((acc: number, Cart_items) => {
+        return (acc += 1 * Cart_items.count);
+      }, 0)
+    : 0;
 }

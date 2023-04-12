@@ -12,7 +12,7 @@ let server: Handler;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.enableCors();
-  // await app.listen(3000);
+
   await app.init();
 
   const config = new DocumentBuilder()
@@ -22,7 +22,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
-
+  // In order to test API via swagger, comment app.init() and uncomment below listen method
+  // await app.listen(3000);
   const expressApp = app.getHttpAdapter().getInstance();
   return serverlessExpress({ app: expressApp });
 }
@@ -35,17 +36,6 @@ export const cartRoot: Handler = async (
   context: Context,
   callback: Callback,
 ) => {
-  // const appContext = await NestFactory.createApplicationContext(AppModule);
-  // const appService = appContext.get(AppService);
-  console.log("INFO | AWS lambda handler init: event: ", event, " context: ", context);
   server = server ?? (await bootstrap());
-  console.log("INFO | SERVER: ", server(event, context, callback));
   return server(event, context, callback)
-  // return {
-  //   body: JSON.stringify('Hello from CART Lambda'),
-  //   statusCode: 200,
-  // };
-
-  // server = server ?? (await bootstrap());
-  // return server(event, context, callback);
 };

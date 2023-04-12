@@ -182,7 +182,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/serverless-example/dev/1681230234159-2023-04-11T16:23:54.159Z/serverless-example.zip"
+                "S3Key": "serverless/serverless-example/dev/1681282356559-2023-04-12T06:52:36.559Z/serverless-example.zip"
               },
               "Handler": "dist/main.cartRoot",
               "Runtime": "nodejs14.x",
@@ -210,14 +210,14 @@
               "CartRootLogGroup"
             ]
           },
-          "CartRootLambdaVersion96uQbLhHZzs5ZnylS6qtjFamMgWVFMfIGt1rACkkCs": {
+          "CartRootLambdaVersionrr9O68QnHeOQOeYhh8YpPjXSrcw4WDfQ354LBbhJ7I": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CartRootLambdaFunction"
               },
-              "CodeSha256": "PRi7wUozGcO0ZleLGndGQHibqPGlsiQvZRn9AGHRDQ4="
+              "CodeSha256": "vTksbSE7Rt0bOmwYQIGIo2oe56HSJlpu8d7OFe/qOfQ="
             }
           },
           "ApiGatewayRestApi": {
@@ -435,7 +435,7 @@
               "CartRootLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1681230214383": {
+          "ApiGatewayDeployment1681282339473": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -500,7 +500,7 @@
           "CartRootLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CartRootLambdaVersion96uQbLhHZzs5ZnylS6qtjFamMgWVFMfIGt1rACkkCs"
+              "Ref": "CartRootLambdaVersionrr9O68QnHeOQOeYhh8YpPjXSrcw4WDfQ354LBbhJ7I"
             },
             "Export": {
               "Name": "sls-serverless-example-dev-CartRootLambdaFunctionQualifiedArn"
@@ -682,7 +682,7 @@
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "CartRootLambdaVersion96uQbLhHZzs5ZnylS6qtjFamMgWVFMfIGt1rACkkCs"
+        "versionLogicalId": "CartRootLambdaVersionrr9O68QnHeOQOeYhh8YpPjXSrcw4WDfQ354LBbhJ7I"
       }
     },
     "configValidationMode": "warn",
@@ -704,7 +704,7 @@
     "artifact": "/Users/Adrian_Kotlinski/Desktop/Workspace/EPAM/aws-practitioner-program/rs-cart-api/.serverless/serverless-example.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/serverless-example/dev/1681230234159-2023-04-11T16:23:54.159Z",
+    "artifactDirectoryName": "serverless/serverless-example/dev/1681282356559-2023-04-12T06:52:36.559Z",
     "artifact": "serverless-example.zip"
   }
 }
