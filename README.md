@@ -73,3 +73,15 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
   Nest is [MIT licensed](LICENSE).
+
+
+## PostgreSQL
+
+Master username
+postgres
+
+Master password
+adikson95
+
+Endpoint
+carts.cmlce2t1zqbk.us-east-1.rds.amazonaws.com

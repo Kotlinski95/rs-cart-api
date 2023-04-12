@@ -1,31 +1,42 @@
 import { Injectable } from '@nestjs/common';
-
-import { v4 } from 'uuid';
-
 import { Cart } from '../models';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Carts } from '../../database/entities/carts.entity';
+import { Repository } from 'typeorm';
+import { CartStatus } from 'src/shared/models';
 
 @Injectable()
 export class CartService {
+  constructor(
+    @InjectRepository(Carts)
+    private readonly cartsRepository: Repository<Carts>,
+  ) {}
   private userCarts: Record<string, Cart> = {};
 
-  findByUserId(userId: string): Cart {
-    return this.userCarts[ userId ];
+  async findByUserId(userId: string): Promise<Carts | undefined> {
+    const carts = await this.cartsRepository.findOne({
+      where: {
+        userId,
+      },
+      relations: ['Cart_items'],
+    });
+    return carts;
   }
 
-  createByUserId(userId: string) {
-    const id = v4(v4());
-    const userCart = {
-      id,
-      items: [],
-    };
+  async createByUserId(userId: string): Promise<Carts> {
+    const carts = {
+      userId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: CartStatus.Open,
+      cartItems: [],
+    } as unknown as Carts;
 
-    this.userCarts[ userId ] = userCart;
-
-    return userCart;
+    return carts;
   }
 
-  findOrCreateByUserId(userId: string): Cart {
-    const userCart = this.findByUserId(userId);
+  async findOrCreateByUserId(userId: string): Promise<Carts> {
+    const userCart = await this.findByUserId(userId);
 
     if (userCart) {
       return userCart;
@@ -34,16 +45,14 @@ export class CartService {
     return this.createByUserId(userId);
   }
 
-  updateByUserId(userId: string, { items }: Cart): Cart {
-    const { id, ...rest } = this.findOrCreateByUserId(userId);
+  async updateByUserId(userId: string, { Cart_items }: Carts): Promise<Carts> {
+    const { id, ...rest } = await this.findOrCreateByUserId(userId);
 
     const updatedCart = {
       id,
       ...rest,
-      items: [ ...items ],
+      Cart_items: [ ...Cart_items ],
     }
-
-    this.userCarts[ userId ] = { ...updatedCart };
 
     return { ...updatedCart };
   }
